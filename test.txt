@@ -1,3 +1,0 @@
-,Prename,Lastname,Course
-0,Jason,Baker,Mathematics
-1,Melanie,Smith,History
