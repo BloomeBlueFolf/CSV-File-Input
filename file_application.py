@@ -56,7 +56,6 @@ def create_csv_file():
 
 
 def create_dataset(list_prenames, list_lastnames, list_courses):
-
     prename, lastname, course = add_row()
 
     list_prenames.append(prename)
@@ -75,31 +74,36 @@ def add_row():
 
 def create_file():
     columns = input("How many columns shall your file have?  ")
-    table_head = []
     dictionary = {}
 
     print("\nCreated a file with %s columns.\n" % columns)
     print("\nPlease name the columns.\n")
     for i in range(int(columns)):
         name = input("\nName of column {}:  ".format(i + 1))
-        table_head.append(name)
+        dictionary[name] = []
 
-    return table_head
+    return dictionary
 
-def add_data(table_head):
 
-    for entry in table_head:
-        list = []
-        input =
+def add_data(dictionary):
+    print("Data input started.\n")
+
+    for table_element in dictionary.keys():
+        data_input = input("\n{}:  ".format(table_element))
+        dictionary[table_element].append(data_input)
+
+    return dictionary
+
 
 def test():
-    add_data(create_file())
+    print(add_data(create_file()))
+
 
 if __name__ == '__main__':
     #create_csv_file()
     #create_file()
     test()
 
-    # creating a txt-file from csv
+
     # deleting a row
     # json
