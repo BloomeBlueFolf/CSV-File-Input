@@ -6,7 +6,8 @@ def create_csv_file():
     list_lastnames = []
     list_courses = []
 
-    print("Welcome! \nHere you can create a csv file.\n\n-c for creating\n-s for saving\n-r for reading\n-q for quitting\n")
+    print("Welcome! \nHere you can create a csv file.\n\n-c for creating\n-s for saving\n-r "
+          "for reading\n-q for quitting\n")
 
     while True:
 
@@ -23,7 +24,7 @@ def create_csv_file():
         if statement == "-s":
             while True:
                 file_name = input("Please name your file to save it.\n") + ".csv"
-                print("%s - y?\n" % file_name)
+                print("{}} - y?\n".format(file_name))
                 y_or_n = input()
                 if y_or_n == "y":
                     dictionary = {"Prename": list_prenames, "Lastname": list_lastnames, "Course": list_courses}
@@ -72,5 +73,33 @@ def add_row():
     return prename, lastname, course
 
 
+def create_file():
+    columns = input("How many columns shall your file have?  ")
+    table_head = []
+    dictionary = {}
+
+    print("\nCreated a file with %s columns.\n" % columns)
+    print("\nPlease name the columns.\n")
+    for i in range(int(columns)):
+        name = input("\nName of column {}:  ".format(i + 1))
+        table_head.append(name)
+
+    return table_head
+
+def add_data(table_head):
+
+    for entry in table_head:
+        list = []
+        input =
+
+def test():
+    add_data(create_file())
+
 if __name__ == '__main__':
-    create_csv_file()
+    #create_csv_file()
+    #create_file()
+    test()
+
+    # creating a txt-file from csv
+    # deleting a row
+    # json
