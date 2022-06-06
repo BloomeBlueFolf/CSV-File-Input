@@ -27,6 +27,15 @@ def create_csv_file():
             dictionary = delete_last_row(dictionary)
             continue
 
+        if statement == "-e":
+
+            user_input = input(tc.colored("\nAll cached data will be lost. Do you really want to clear "
+                                          "your work list? y?\n", "red"))
+            if user_input == "y":
+                dictionary = clear_work_list(dictionary)
+
+            continue
+
         if statement == "-a":
             # if dictionary is empty
             if not dictionary.keys():
@@ -48,6 +57,7 @@ def create_csv_file():
             print("\n-a  You can add a row of data to your work list.")
             print("\n-c  Lets you create a table header for your work list.")
             print("\n-d  Deletes the last row of your work list")
+            print("\n-e  Clears your work list")
             print("\n-h  Shows you a description to a command's function.")
             print("\n-q  Eventually exits the application.")
             print("\n-r  Displays you the content of an arbitrary csv file and handles it as work list.")
@@ -56,7 +66,7 @@ def create_csv_file():
 
         if statement == "-s":
             while True:
-                file_name = input("Please name your file to save it.\n") + ".csv"
+                file_name = input("\nPlease name your file to save it.\n") + ".csv"
                 print("{} - y?\n".format(file_name))
                 accept = input()
                 if accept == "y":
@@ -76,6 +86,9 @@ def create_csv_file():
                 print("Enter a filename!  ")
 
                 filename = input() + ".csv"
+
+                if filename == "-q.csv":
+                    break
 
                 try:
                     # reads a csv file from pandas csv reader
@@ -128,6 +141,12 @@ def delete_last_row(dictionary):
 
     print("\nLast row deleted.", tc.colored("Save the file to keep the changes.\n", "blue"))
 
+    return dictionary
+
+
+def clear_work_list(dictionary):
+    dictionary.clear()
+    print("Work list cleared.")
     return dictionary
 
 
