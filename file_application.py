@@ -1,4 +1,5 @@
 import pandas as pd
+import pandas.errors
 import termcolor as tc
 
 
@@ -7,16 +8,20 @@ def create_csv_file():
     # global dictionary as work list
     dictionary = {}
 
-    description = "\n\n-a for adding data\n-c for creating\n-d for deleting the last row\n-h for help\n-q for quitting" \
-                  "\n-r for reading\n-s for saving\n"
-    print(tc.colored("\nWelcome! \nHere you can create a csv file.", "blue") + "{}".format(description))
+    description = "\n\n-a for adding data to the work list\n-c for creating a work list\n" \
+                  "-d for deleting the last row\n-" \
+                  "e for clearing the work list\n-h for help\n-i for importing a file to work list\n" \
+                  "-q for quitting\n-r for reading a csv file\n-s for saving the work list\n" \
+                  "-v for showing the work list\n"
+
+    print(tc.colored("\nWelcome! \nHere you can manipulate csv files.", "blue") + "{}".format(description))
 
     while True:
 
-        statement = input("\nWhat do you want to do?  ")
+        statement = input("What do you want to do?  ")
 
         if statement == "-q":
-            print("Thank you for using the tool. Goodbye.")
+            print("\nThank you for using the tool. Goodbye.")
             break
 
         if statement == "-c":
@@ -27,13 +32,21 @@ def create_csv_file():
             dictionary = delete_last_row(dictionary)
             continue
 
+        if statement == "-v":
+            show_work_list(dictionary)
+            continue
+
         if statement == "-e":
 
             user_input = input(tc.colored("\nAll cached data will be lost. Do you really want to clear "
-                                          "your work list? y?\n", "red"))
+                                          "your work list? If you want to continue press \"y\".\n", "red"))
             if user_input == "y":
                 dictionary = clear_work_list(dictionary)
 
+            continue
+
+        if statement == "-i":
+            import_csv_file(dictionary)
             continue
 
         if statement == "-a":
@@ -55,13 +68,16 @@ def create_csv_file():
 
         if statement == "-h":
             print("\n-a  You can add a row of data to your work list.")
-            print("\n-c  Lets you create a table header for your work list.")
-            print("\n-d  Deletes the last row of your work list")
-            print("\n-e  Clears your work list")
-            print("\n-h  Shows you a description to a command's function.")
-            print("\n-q  Eventually exits the application.")
-            print("\n-r  Displays you the content of an arbitrary csv file and handles it as work list.")
-            print("\n-s  Saves your work list as a csv file.")
+            print("-c  Lets you create a table header for your work list.")
+            print("-d  Deletes the last row of your work list.")
+            print("-e  Clears your work list.")
+            print("-h  Shows you a description to a command's function.")
+            print("-i  Imports data of an existing csv file to work list.")
+            print("-q  Eventually exits the application.")
+            print("-r  Displays you the content of an arbitrary csv file and handles it as work list.")
+            print("-s  Saves your work list as a csv file.")
+            print("-v  Shows the current work list.")
+            print("\n")
             continue
 
         if statement == "-s":
@@ -100,8 +116,12 @@ def create_csv_file():
                     print(tc.colored("There's not such a file. Try again!\n", "red"))
                     continue
 
+                except pandas.errors.EmptyDataError:
+                    print(tc.colored("\nThat's an empty file and cannot be read!\n", "red"))
+                    continue
+
         else:
-            print(tc.colored("\nThis was no valid statement.{}".format(description), "red"))
+            print(tc.colored("\nThis was no valid statement.{}\n".format(description), "red"))
             continue
 
 
@@ -146,9 +166,41 @@ def delete_last_row(dictionary):
 
 def clear_work_list(dictionary):
     dictionary.clear()
-    print("Work list cleared.")
+    print("Work list cleared.\n")
     return dictionary
+
+
+def import_csv_file(dictionary):
+
+    while True:
+        filename = input("\nWhich csv file you want to import to work list?\n") + ".csv"
+
+        if filename == "-q.csv":
+            break
+
+        try:
+            dataframe = pd.read_csv(filename)
+
+            for table_header in dataframe:
+                # iterates all table headers in dataframe and creates an empty list for each
+                dictionary[table_header] = []
+                # iterates every column and puts the elements in dictionary lists
+                for column in range(len(dataframe.columns)):
+                    dictionary[table_header].append(dataframe.loc[column].at[table_header])
+
+            return dictionary
+
+        except FileNotFoundError:
+            print(tc.colored("\nThere's no such file!\n", "red"))
+            continue
+
+
+def show_work_list(dictionary):
+    print(dictionary)
 
 
 if __name__ == '__main__':
     create_csv_file()
+
+
+
