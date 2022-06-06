@@ -2,12 +2,14 @@ import pandas as pd
 import termcolor as tc
 
 
+# main file
 def create_csv_file():
+    # global dictionary as work list
     dictionary = {}
 
-    description = "\n\n-a for adding data\n-c for creating\n-h for help\n-q for quitting" \
+    description = "\n\n-a for adding data\n-c for creating\n-d for deleting the last row\n-h for help\n-q for quitting" \
                   "\n-r for reading\n-s for saving\n"
-    print("Welcome! \nHere you can create a csv file.{}".format(description))
+    print(tc.colored("\nWelcome! \nHere you can create a csv file.", "blue") + "{}".format(description))
 
     while True:
 
@@ -26,8 +28,9 @@ def create_csv_file():
             continue
 
         if statement == "-a":
+            # if dictionary is empty
             if not dictionary.keys():
-                print("\nThere is no table header created. Create a table header to add data!\n")
+                print(tc.colored("\nThere is no table header created. Create a table header to add data!\n", "red"))
                 continue
 
             else:
@@ -42,12 +45,13 @@ def create_csv_file():
                 continue
 
         if statement == "-h":
-            print("\n-a  You can add a row of data to an already created table.")
-            print("\n-c  Lets you create a table header.")
+            print("\n-a  You can add a row of data to your work list.")
+            print("\n-c  Lets you create a table header for your work list.")
+            print("\n-d  Deletes the last row of your work list")
             print("\n-h  Shows you a description to a command's function.")
             print("\n-q  Eventually exits the application.")
-            print("\n-r  Displays you the content of an arbitrary csv file.")
-            print("\n-s  Saves your created table as a csv file.")
+            print("\n-r  Displays you the content of an arbitrary csv file and handles it as work list.")
+            print("\n-s  Saves your work list as a csv file.")
             continue
 
         if statement == "-s":
@@ -56,6 +60,7 @@ def create_csv_file():
                 print("{} - y?\n".format(file_name))
                 accept = input()
                 if accept == "y":
+                    # saves data from dictionary in pandas dataframe to create a csv without indices
                     dataframe = pd.DataFrame(dictionary)
                     dataframe.to_csv(file_name, index=False)
                     print("File created.")
@@ -73,16 +78,17 @@ def create_csv_file():
                 filename = input() + ".csv"
 
                 try:
+                    # reads a csv file from pandas csv reader
                     dataframe = pd.read_csv(filename)
                     print(dataframe)
                     break
 
                 except FileNotFoundError:
-                    print(tc.colored("There's not such a file. Try again!\n"))
+                    print(tc.colored("There's not such a file. Try again!\n", "red"))
                     continue
 
         else:
-            print(tc.colored("\nThis was no valid statement.{}".format(description)))
+            print(tc.colored("\nThis was no valid statement.{}".format(description), "red"))
             continue
 
 
@@ -90,12 +96,14 @@ def create_dataset(dictionary):
     columns = input("How many columns shall your file have?  ")
 
     try:
-
-        for i in range(int(columns)):
-            name = input("\nName of column {}:  ".format(i + 1))
-            dictionary[name] = []
-        print("\nCreated a file with %s columns.\n" % columns)
+        # necessary to check if correct type of input before printing
+        amount = int(columns)
         print("\nPlease name the columns.\n")
+        for i in range(amount):
+            name = input("\nName of column {}:  ".format(i + 1))
+            # saves the names of columns in dictionary as key with empty list as value
+            dictionary[name] = []
+        print("\nCreated a table header with %s columns.\n" % columns)
 
         return dictionary
 
@@ -105,6 +113,7 @@ def create_dataset(dictionary):
 
 def add_data(dictionary):
 
+    # iterates through all keys in dictionary and saves for each key the user input as value (list)
     for table_element in dictionary.keys():
         data_input = input("\n{}:  ".format(table_element))
         dictionary[table_element].append(data_input)
@@ -115,13 +124,12 @@ def add_data(dictionary):
 def delete_last_row(dictionary):
 
     for table_element in dictionary.keys():
-        dictionary[table_element].remove(-1)
+        dictionary[table_element].pop()
+
+    print("\nLast row deleted.", tc.colored("Save the file to keep the changes.\n", "blue"))
 
     return dictionary
 
 
 if __name__ == '__main__':
     create_csv_file()
-
-    # deleting a row
-    # json
