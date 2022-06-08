@@ -15,6 +15,7 @@ def create_csv_file():
 
     # global dictionary as work list
     dictionary = {}
+    logging.info("empty work list created")
 
     description = "\n\n-a for adding data to the work list\n-c for creating a work list\n" \
                   "-d for deleting the last row\n-" \
@@ -23,45 +24,55 @@ def create_csv_file():
                   "-v for showing the work list\n"
 
     print(tc.colored("\nWelcome! \nHere you can manipulate csv files.", "blue") + "{}".format(description))
+    logging.info("welcome text displayed")
 
     while True:
 
         statement = input("What do you want to do?  ")
+        logging.info("statement required")
 
         if statement == "-q":
             print("\nThank you for using the tool. Goodbye.")
             time.sleep(4)
+            logging.info("shutdown process initiated")
             break
 
         if statement == "-c":
             dictionary = create_dataset(dictionary)
+            logging.info("work list created")
             continue
 
         if statement == "-d":
             dictionary = delete_last_row(dictionary)
+            logging.info("last row deleted")
             continue
 
         if statement == "-v":
             show_work_list(dictionary)
+            logging.info("current work list displayed")
             continue
 
         if statement == "-e":
 
             user_input = input(tc.colored("\nAll cached data will be lost. Do you really want to clear "
                                           "your work list? If you want to continue press \"y\".\n", "red"))
+            logging.info("request accepting question asked")
             if user_input == "y":
                 dictionary = clear_work_list(dictionary)
+                logging.info("work list erased")
 
             continue
 
         if statement == "-i":
             import_csv_file(dictionary)
+            logging.info("file imported as work list")
             continue
 
         if statement == "-a":
             # if dictionary is empty
             if not dictionary.keys():
                 print(tc.colored("\nThere is no table header created. Create a table header to add data!\n", "red"))
+                logging.warning("no existing work list - adding data failed")
                 continue
 
             else:
@@ -70,9 +81,12 @@ def create_csv_file():
                 next_row = True
                 while next_row:
                     dictionary = add_data(dictionary)
+                    logging.info("data added")
                     continue_data_input = input("\nIf you want to continue with adding data press \"y\".\n")
+                    logging.info("question about adding more data asked")
                     if continue_data_input != "y":
                         next_row = False
+                        logging.info("adding data finished")
                 continue
 
         if statement == "-h":
@@ -87,17 +101,21 @@ def create_csv_file():
             print("-s  Saves your work list as a csv file.")
             print("-v  Shows the current work list.")
             print("\n")
+            logging.info("help information displayed")
             continue
 
         if statement == "-s":
             while True:
                 file_name = input("\nPlease name your file to save it.\n") + ".csv"
+                logging.info("naming file for saving required")
                 print("{} - y?\n".format(file_name))
+                logging.info("echo filename")
                 accept = input()
                 if accept == "y":
                     # saves data from dictionary in pandas dataframe to create a csv without indices
                     dataframe = pd.DataFrame(dictionary)
                     dataframe.to_csv(file_name, index=False)
+                    logging.info("csv file created")
                     print("File created.")
                     break
 
@@ -107,12 +125,15 @@ def create_csv_file():
             continue
 
         if statement == "-r":
+            logging.info("displaying work list started")
             while True:
                 print("Enter a filename!  ")
 
                 filename = input() + ".csv"
+                logging.info("entering a file name required")
 
                 if filename == "-q.csv":
+                    logging.info("quitting displaying a work list")
                     break
 
                 try:
@@ -123,34 +144,42 @@ def create_csv_file():
 
                 except FileNotFoundError:
                     print(tc.colored("There's not such a file. Try again!\n", "red"))
+                    logging.error("file not found for reading")
                     continue
 
                 except pandas.errors.EmptyDataError:
                     print(tc.colored("\nThat's an empty file and cannot be read!\n", "red"))
+                    logging.error("empty file can not be read")
                     continue
 
         else:
             print(tc.colored("\nThis was no valid statement.{}\n".format(description), "red"))
+            logging.error("invalid command")
             continue
 
 
 def create_dataset(dictionary):
     columns = input("How many columns shall your file have?  ")
+    logging.info("amount of columns required")
 
     try:
         # necessary to check if correct type of input before printing
         amount = int(columns)
+        logging.info("amount of columns input")
         print("\nPlease name the columns.\n")
         for i in range(amount):
             name = input("\nName of column {}:  ".format(i + 1))
             # saves the names of columns in dictionary as key with empty list as value
             dictionary[name] = []
+            logging.info("column named")
         print("\nCreated a table header with %s columns.\n" % columns)
+        logging.info("%s columns named" % columns)
 
         return dictionary
 
     except ValueError:
         print(tc.colored("\n Please enter a valid number!\n", "red"))
+        logging.error("no valid number input")
 
 
 def add_data(dictionary):
@@ -159,6 +188,8 @@ def add_data(dictionary):
     for table_element in dictionary.keys():
         data_input = input("\n{}:  ".format(table_element))
         dictionary[table_element].append(data_input)
+
+    logging.info("data input")
 
     return dictionary
 
@@ -183,8 +214,10 @@ def import_csv_file(dictionary):
 
     while True:
         filename = input("\nWhich csv file you want to import to work list?\n") + ".csv"
+        logging.info("csv file input required")
 
         if filename == "-q.csv":
+            logging.info("file import quit")
             break
 
         try:
@@ -197,10 +230,13 @@ def import_csv_file(dictionary):
                 for column in range(len(dataframe.columns)):
                     dictionary[table_header].append(dataframe.loc[column].at[table_header])
 
+            logging.info("imported file to work list")
+
             return dictionary
 
         except FileNotFoundError:
             print(tc.colored("\nThere's no such file!\n", "red"))
+            logging.error("required file not found")
             continue
 
 
@@ -219,6 +255,3 @@ def logger():
 
 if __name__ == '__main__':
     create_csv_file()
-
-
-
