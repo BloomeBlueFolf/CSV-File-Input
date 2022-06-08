@@ -1,10 +1,18 @@
 import pandas as pd
 import pandas.errors
 import termcolor as tc
+import time
+import logging
+import os
+import pathlib
 
 
 # main file
 def create_csv_file():
+
+    logger()
+    logging.info("logger created")
+
     # global dictionary as work list
     dictionary = {}
 
@@ -22,6 +30,7 @@ def create_csv_file():
 
         if statement == "-q":
             print("\nThank you for using the tool. Goodbye.")
+            time.sleep(4)
             break
 
         if statement == "-c":
@@ -197,6 +206,15 @@ def import_csv_file(dictionary):
 
 def show_work_list(dictionary):
     print(dictionary)
+
+
+def logger():
+    log_dir = str(pathlib.Path(__file__).parent) + "\\logfiles"
+    if not os.path.isdir(log_dir):
+        os.mkdir(log_dir)
+    logging.basicConfig(filename=log_dir + "\\logging.log", encoding="utf-8", level=logging.INFO,
+                        format="%(levelname)s - [%(asctime)s ] - %(message)s", datefmt=" %d.%m.%Y - %I:%M:%S %p",
+                        filemode="w")
 
 
 if __name__ == '__main__':
