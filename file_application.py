@@ -38,22 +38,26 @@ def create_csv_file():
             break
 
         if statement == "-c":
+            logging.info("creating a work list started")
             dictionary = create_dataset(dictionary)
             logging.info("work list created")
             continue
 
         if statement == "-d":
+            logging.info("deleting the last row started")
             dictionary = delete_last_row(dictionary)
             logging.info("last row deleted")
             continue
 
         if statement == "-v":
+            logging.info("displaying current work list started")
             show_work_list(dictionary)
             logging.info("current work list displayed")
             continue
 
         if statement == "-e":
 
+            logging.info("erasing process for current work list initiated")
             user_input = input(tc.colored("\nAll cached data will be lost. Do you really want to clear "
                                           "your work list? If you want to continue press \"y\".\n", "red"))
             logging.info("request accepting question asked")
@@ -64,11 +68,13 @@ def create_csv_file():
             continue
 
         if statement == "-i":
+            logging.info("importing a file to work list started")
             import_csv_file(dictionary)
             logging.info("file imported as work list")
             continue
 
         if statement == "-a":
+            logging.info("adding data to work list started")
             # if dictionary is empty
             if not dictionary.keys():
                 print(tc.colored("\nThere is no table header created. Create a table header to add data!\n", "red"))
@@ -90,6 +96,7 @@ def create_csv_file():
                 continue
 
         if statement == "-h":
+            logging.info("displaying commands started")
             print("\n-a  You can add a row of data to your work list.")
             print("-c  Lets you create a table header for your work list.")
             print("-d  Deletes the last row of your work list.")
@@ -105,6 +112,7 @@ def create_csv_file():
             continue
 
         if statement == "-s":
+            logging.info("saving work list process started")
             while True:
                 file_name = input("\nPlease name your file to save it.\n") + ".csv"
                 logging.info("naming file for saving required")
@@ -125,7 +133,7 @@ def create_csv_file():
             continue
 
         if statement == "-r":
-            logging.info("displaying work list started")
+            logging.info("reading a csv file started")
             while True:
                 print("Enter a filename!  ")
 
