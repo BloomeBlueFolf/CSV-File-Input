@@ -5,6 +5,7 @@ import time
 import logging
 import os
 import pathlib
+import re
 
 
 # main file
@@ -13,13 +14,15 @@ def create_csv_file():
     logger()
     logging.info("logger created")
 
+    regex_file = re.compile("[^\\\/:*?\"<>|!\'#§$%&()=^+]")
+
     # global dictionary as work list
     dictionary = {}
     logging.info("empty work list created")
 
     description = "\n\n-a for adding data to the work list\n-c for creating a work list\n" \
-                  "-d for deleting the last row\n-" \
-                  "e for clearing the work list\n-h for help\n-i for importing a file to work list\n" \
+                  "-d for deleting the last row\n" \
+                  "-e for clearing the work list\n-h for help\n-i for importing a file to work list\n" \
                   "-q for quitting\n-r for reading a csv file\n-s for saving the work list\n" \
                   "-v for showing the work list\n"
 
@@ -62,6 +65,7 @@ def create_csv_file():
                                           "your work list? If you want to continue press \"y\".\n", "red"))
             logging.info("request accepting question asked")
             if user_input == "y":
+                logging.info("checking for valid command: ok")
                 dictionary = clear_work_list(dictionary)
                 logging.info("work list erased")
 
@@ -91,6 +95,7 @@ def create_csv_file():
                     continue_data_input = input("\nIf you want to continue with adding data press \"y\".\n")
                     logging.info("question about adding more data asked")
                     if continue_data_input != "y":
+                        logging.info("continuation declined")
                         next_row = False
                         logging.info("adding data finished")
                 continue
@@ -116,20 +121,22 @@ def create_csv_file():
             while True:
                 file_name = input("\nPlease name your file to save it.\n") + ".csv"
                 logging.info("naming file for saving required")
-                print("{} - y?\n".format(file_name))
-                logging.info("echo filename")
-                accept = input()
-                if accept == "y":
-                    # saves data from dictionary in pandas dataframe to create a csv without indices
-                    dataframe = pd.DataFrame(dictionary)
-                    dataframe.to_csv(file_name, index=False)
-                    logging.info("csv file created")
-                    print("File created.")
-                    break
+                if regex_file.match(file_name):
+                    print("{} - y?\n".format(file_name))
+                    logging.info("echo filename")
+                    accept = input()
+                    if accept == "y":
+                        # saves data from dictionary in pandas dataframe to create a csv without indices
+                        dataframe = pd.DataFrame(dictionary)
+                        dataframe.to_csv(file_name, index=False)
+                        logging.info("csv file created")
+                        print("File created.")
+                        break
 
+                    else:
+                        continue
                 else:
-                    continue
-
+                    print(tc.colored("\nPlease enter a valid file name!", "red"))
             continue
 
         if statement == "-r":
@@ -160,9 +167,15 @@ def create_csv_file():
                     logging.error("empty file can not be read")
                     continue
 
+                except OSError:
+                    print(tc.colored("\nThat is not a valid file name!\n", "red"))
+                    logging.error("no valid file requested")
+                    continue
+
         else:
-            print(tc.colored("\nThis was no valid statement.{}\n".format(description), "red"))
-            logging.error("invalid command")
+            print(tc.colored("\nThis was no valid statement.", "red"))
+            print("\nPlease use:{}".format(description))
+            logging.error("checking valid command: not ok")
             continue
 
 
@@ -221,7 +234,7 @@ def clear_work_list(dictionary):
 def import_csv_file(dictionary):
 
     while True:
-        filename = input("\nWhich csv file you want to import to work list?\n") + ".csv"
+        filename = input("\nWhich csv file do you want to import to work list?\n") + ".csv"
         logging.info("csv file input required")
 
         if filename == "-q.csv":
@@ -247,6 +260,11 @@ def import_csv_file(dictionary):
             logging.error("required file not found")
             continue
 
+        except OSError:
+            print(tc.colored("\nThat is not a valid file name!\n", "red"))
+            logging.error("no valid file requested")
+            continue
+
 
 def show_work_list(dictionary):
     print(dictionary)
@@ -256,6 +274,7 @@ def logger():
     log_dir = str(pathlib.Path(__file__).parent) + "\\logfiles"
     if not os.path.isdir(log_dir):
         os.mkdir(log_dir)
+        logging.info("log directory created")
     logging.basicConfig(filename=log_dir + "\\logging.log", encoding="utf-8", level=logging.INFO,
                         format="%(levelname)s - [%(asctime)s ] - %(message)s", datefmt=" %d.%m.%Y - %I:%M:%S %p",
                         filemode="w")
